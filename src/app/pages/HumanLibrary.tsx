@@ -12,7 +12,7 @@ import { useApp } from "../context/AppContext";
 import { toast } from "sonner";
 
 export default function HumanLibrary() {
-  const { livingBooks } = useApp();
+  const { livingBooks, livingBookSessions } = useApp();
   const { t, isBn, bnFont } = useLang();
   const F = isBn ? bnFont : "'Inter', sans-serif";
   const FH = isBn ? bnFont : "'Sora', sans-serif";
@@ -168,19 +168,19 @@ export default function HumanLibrary() {
           </div>
 
           <div className="space-y-4">
-            {(livingBooks || []).slice(0, 3).map((session) => (
+            {(livingBookSessions || []).map((session) => (
               <div key={session._id || session.id} className="p-6 rounded-3xl flex flex-wrap items-center justify-center gap-6 hover:bg-white/05 transition-colors border border-white/05">
                 <div className="flex items-center gap-6 flex-1 min-w-[300px]">
                   <div className="w-16 h-16 rounded-2xl bg-blue-600 flex flex-col items-center justify-center text-white text-center flex-shrink-0">
-                    <span className="text-xl font-bold leading-none">12</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">MAY</span>
+                    <span className="text-xl font-bold leading-none">{session.date.split(" ")[0]}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{session.date.split(" ")[1]}</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-1">"{session.title}" — {session.narrator}</h3>
+                    <h3 className="text-lg font-bold text-white mb-1">{session.bookTitle}</h3>
                     <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-                      <span className="flex items-center gap-1.5"><Clock size={14} /> 10:00 AM · 45m</span>
-                      <span className="flex items-center gap-1.5"><MapPin size={14} /> Humanity Library Hub</span>
-                      <span className="flex items-center gap-1.5" style={{ color: "#60A5FA" }}><Globe size={14} /> In-Person</span>
+                      <span className="flex items-center gap-1.5"><Clock size={14} /> {session.time}</span>
+                      <span className="flex items-center gap-1.5"><MapPin size={14} /> {session.location}</span>
+                      <span className="flex items-center gap-1.5" style={{ color: "#60A5FA" }}><Globe size={14} /> {session.type}</span>
                     </div>
                   </div>
                 </div>
@@ -189,6 +189,9 @@ export default function HumanLibrary() {
                 </button>
               </div>
             ))}
+            {(!livingBookSessions || livingBookSessions.length === 0) && (
+              <p className="text-gray-500 text-center py-8">{isBn ? "কোনো আসন্ন সেশন নেই" : "No upcoming sessions found"}</p>
+            )}
           </div>
         </div>
       </section>

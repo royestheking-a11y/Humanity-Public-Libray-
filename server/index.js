@@ -59,7 +59,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 import Book from "./models/Book.js";
 import User from "./models/User.js";
 import { Event, BlogPost, Testimonial } from "./models/Content.js";
-import { VolunteerRole, BookRequest, Payment, VolunteerApplication } from "./models/Operations.js";
+import { VolunteerRole, BookRequest, Payment, VolunteerApplication, LivingBookSession } from "./models/Operations.js";
 import { CarouselSlide, LivingBook, Badge, Stat, DonationTier, Leaderboard } from "./models/Extras.js";
 
 // Generic CRUD helper
@@ -114,12 +114,79 @@ createCRUD(Payment, "payments");
 createCRUD(CarouselSlide, "carousel-slides");
 createCRUD(LivingBook, "living-books");
 createCRUD(Badge, "badges");
-createCRUD(Stat, "stats");
+// createCRUD(Stat, "stats"); // Replaced with dynamic endpoint below
+
+// --- Dashboard Stats Endpoint ---
+app.get("/api/stats", async (req, res) => {
+  try {
+    const [
+      totalBooks,
+      audioBooks,
+      activeUsers,
+      volunteers,
+      donationsData,
+    ] = await Promise.all([
+      Book.countDocuments(),
+      Book.countDocuments({ audioAvailable: true }),
+      User.countDocuments({ role: "member" }),
+      VolunteerApplication.countDocuments(),
+      Payment.find({ purpose: "donation", status: "approved" }),
+    ]);
+
+    const totalDonations = donationsData.reduce((sum, p) => sum + p.amount, 0);
+
+    res.json({
+      totalBooks,
+      audioBooks,
+      activeUsers,
+      volunteers,
+      donations: totalDonations,
+      countriesServed: 1, 
+      languagesAvailable: 2,
+      visuallyImpairedUsers: Math.floor(activeUsers * 0.15),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 createCRUD(DonationTier, "donation-tiers");
 createCRUD(Leaderboard, "leaderboard");
 createCRUD(VolunteerApplication, "volunteer-applications");
+createCRUD(LivingBookSession, "living-book-sessions");
 
 // --- Auth Routes ---
+
+// --- Seeding Routes ---
+app.post("/api/seed/human-library", async (req, res) => {
+  const livingBooksData = [
+    { title: "My home is underwater", narrator: "Fatema Khatun", category: "Climate migration · erosion", icon: "Waves", description: "A story of losing three homes to the rising tides of the Bay of Bengal." },
+    { title: "The sea used to give", narrator: "Abdul Jalil", category: "Fisher community · salinity", icon: "Fish", description: "How the changing salinity of our rivers turned a bountiful life into a struggle for survival." },
+    { title: "The night of the cyclone", narrator: "Marium Begum", category: "Disaster survivor · Dacope", icon: "Wind", description: "A harrowing account of surviving the strongest storm in a generation." },
+    { title: "A craft no one buys", narrator: "Shyamol Sutradhar", category: "Local artisan · heritage", icon: "Palette", description: "The fading art of traditional wood carving in the coastal villages." },
+    { title: "I was 13", narrator: "Tania Akter", category: "Early marriage · education", icon: "Heart", description: "A journey from being a child bride to an advocate for girls' education." },
+    { title: "Our ancestors' land", narrator: "Joyanto Munda", category: "Indigenous community", icon: "History", description: "Preserving the culture and land rights of the Munda people in the Sundarbans." },
+    { title: "Walking miles for water", narrator: "Sufia Bibi", category: "Water crisis · salinity", icon: "Droplets", description: "The daily struggle of coastal women to find a single pot of drinkable water." },
+    { title: "I stayed to help", narrator: "Rezaul Karim", category: "Social worker · resilience", icon: "Handshake", description: "Why I chose to stay in my vulnerable village to build a better future for the next generation." }
+  ];
+
+  try {
+    await LivingBook.deleteMany({});
+    await LivingBook.insertMany(livingBooksData);
+    
+    // Seed some initial sessions
+    const sessionData = [
+      { bookTitle: "The night of the cyclone", userName: "Admin", userEmail: "admin@hpl.com", date: "12 JUL", time: "6:00 PM", location: "Online", type: "Online", status: "approved" },
+      { bookTitle: "My home is underwater", userName: "Admin", userEmail: "admin@hpl.com", date: "19 JUL", time: "10:00 AM", location: "Nalian Library, Dacope", type: "In-person", status: "approved" },
+      { bookTitle: "Researcher field visit", userName: "Admin", userEmail: "admin@hpl.com", date: "26 JUL", time: "Full day", location: "Nalian village", type: "Field visit", status: "approved" }
+    ];
+    await LivingBookSession.deleteMany({});
+    await LivingBookSession.insertMany(sessionData);
+
+    res.json({ message: "Human Library seeded successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Registration
 app.post("/api/auth/register", async (req, res) => {

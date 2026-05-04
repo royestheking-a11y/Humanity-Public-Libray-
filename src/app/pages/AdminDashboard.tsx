@@ -178,10 +178,10 @@ function OverviewSection() {
   const { stats, payments, bookRequests } = useApp();
   
   const kpis = [
-    { label: "Total Books", value: stats?.totalBooks.toLocaleString() || "0", change: "+12%", icon: BookOpen, color: "#2563EB" },
-    { label: "Active Users", value: stats?.activeUsers.toLocaleString() || "0", change: "+8%", icon: Users, color: "#2563EB" },
-    { label: "Total Donations", value: `৳${(stats?.donations || 0).toLocaleString()}`, change: "+24%", icon: Heart, color: "#60A5FA" },
-    { label: "Volunteers", value: stats?.volunteers.toLocaleString() || "0", change: "+5%", icon: UserCheck, color: "#22C55E" },
+    { label: "Total Books", value: (stats?.totalBooks || 0).toLocaleString(), change: (stats?.totalBooks || 0) > 0 ? "Live" : "Empty", icon: BookOpen, color: "#2563EB" },
+    { label: "Active Users", value: (stats?.activeUsers || 0).toLocaleString(), change: "Active", icon: Users, color: "#2563EB" },
+    { label: "Total Donations", value: `৳${(stats?.donations || 0).toLocaleString()}`, change: "Real-time", icon: Heart, color: "#60A5FA" },
+    { label: "Volunteers", value: (stats?.volunteers || 0).toLocaleString(), change: "Verified", icon: UserCheck, color: "#22C55E" },
   ];
 
   // Dynamic monthly reads from bookRequests
@@ -774,9 +774,9 @@ function DonationsSection() {
   );
 
   const statsItems = [
-    { label: "Total Raised", value: `৳${(stats?.donations || 0).toLocaleString()}`, change: "+24%" },
-    { label: "Total Donors", value: donations.length.toString(), change: "+8 this month" },
-    { label: "Avg. Donation", value: `৳${donations.length ? (stats?.donations || 0 / donations.length).toFixed(0) : 0}`, change: "+৳20 vs last month" },
+    { label: "Total Raised", value: `৳${(stats?.donations || 0).toLocaleString()}`, change: "Updated Live" },
+    { label: "Total Donors", value: donations.length.toString(), change: "Verified" },
+    { label: "Avg. Donation", value: `৳${donations.length ? Math.round((stats?.donations || 0) / donations.length) : 0}`, change: "Per Donor" },
   ];
 
   return (
@@ -1139,7 +1139,7 @@ function AnalyticsSection() {
 }
 // ── Human Library Section ───────────────────────────────────────────────────
 function HumanLibrarySection() {
-  const { livingBooks, setLivingBooks } = useApp();
+  const { livingBooks, setLivingBooks, livingBookSessions } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [isAdding, setIsAdding] = useState(true);
   const [editingBook, setEditingBook] = useState<any>(null);
@@ -1258,25 +1258,29 @@ function HumanLibrarySection() {
 
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-bold mb-4">Recent Bookings</h3>
+            <h3 className="text-lg font-bold mb-4">Upcoming Sessions</h3>
             <div className="space-y-4">
-              {[
-                { user: "John Doe", book: "My home is underwater", date: "May 12", type: "Online" },
-                { user: "Sarah Smith", book: "I was 13", date: "May 15", type: "In-person" },
-              ].map((booking, i) => (
-                <div key={i} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+              {livingBookSessions.map((session, i) => (
+                <div key={session._id || session.id || i} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-blue-600">{booking.type}</span>
-                    <span className="text-xs text-gray-500">{booking.date}</span>
+                    <span className="text-xs font-bold text-blue-600 uppercase">{session.type}</span>
+                    <span className="text-xs text-gray-500">{session.date} · {session.time}</span>
                   </div>
-                  <h4 className="text-sm font-bold text-gray-900">{booking.user}</h4>
-                  <p className="text-xs text-gray-500 mb-3">Requested: {booking.book}</p>
+                  <h4 className="text-sm font-bold text-gray-900">{session.bookTitle}</h4>
+                  <p className="text-xs text-gray-500 mb-3">User: {session.userName}</p>
                   <div className="flex gap-2">
-                    <button className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold">Approve</button>
-                    <button className="px-3 py-2 bg-gray-200 text-gray-600 rounded-lg text-xs font-bold">Details</button>
+                    {session.status === "pending" ? (
+                      <button className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors">Approve</button>
+                    ) : (
+                      <span className="flex-1 py-2 bg-green-50 text-green-600 rounded-lg text-xs font-bold text-center">Confirmed ✓</span>
+                    )}
+                    <button className="px-3 py-2 bg-gray-200 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-300 transition-colors">Details</button>
                   </div>
                 </div>
               ))}
+              {livingBookSessions.length === 0 && (
+                <p className="text-xs text-gray-400 text-center py-4">No active sessions.</p>
+              )}
             </div>
           </div>
         </div>

@@ -58,3 +58,18 @@ const volunteerApplicationSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export const VolunteerApplication = mongoose.model("VolunteerApplication", volunteerApplicationSchema);
+
+const livingBookSessionSchema = new mongoose.Schema({
+  bookId: { type: String },
+  bookTitle: { type: String },
+  userName: { type: String },
+  userEmail: { type: String },
+  date: { type: String },
+  time: { type: String },
+  location: { type: String },
+  type: { type: String },
+  purpose: { type: String },
+  status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+}, { timestamps: true });
+
+export const LivingBookSession = mongoose.model("LivingBookSession", livingBookSessionSchema);
