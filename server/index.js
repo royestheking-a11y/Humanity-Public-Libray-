@@ -67,7 +67,7 @@ import { CarouselSlide, LivingBook, Badge, Stat, DonationTier, Leaderboard } fro
 const createCRUD = (model, path) => {
   app.get(`/api/${path}`, async (req, res) => {
     try {
-      const data = await model.find();
+      const data = await model.find().sort({ createdAt: -1 });
       res.json(data);
     } catch (err) {
       res.status(500).json({ error: err.message });
