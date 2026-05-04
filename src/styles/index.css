@@ -1,0 +1,59 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Global font */
+body {
+  font-family: 'Inter', 'Sora', sans-serif;
+  background: #FAFAFA;
+}
+
+/* High Contrast Mode */
+html.high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+html.high-contrast .bg-white,
+html.high-contrast [style*="background: #fff"],
+html.high-contrast [style*="background: white"] {
+  background: #111 !important;
+  color: #fff !important;
+}
+html.high-contrast p,
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast span {
+  color: #fff !important;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Range input styling */
+input[type="range"]::-webkit-slider-runnable-track {
+  border-radius: 9999px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #2563EB;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1D4ED8;
+}
+
+/* Animate bounce keyframes for audio visualization */
+@keyframes audioWave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
