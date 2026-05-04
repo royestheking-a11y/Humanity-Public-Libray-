@@ -73,3 +73,11 @@ const livingBookSessionSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export const LivingBookSession = mongoose.model("LivingBookSession", livingBookSessionSchema);
+
+const sessionTypeSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  icon: { type: String },
+  description: { type: String },
+}, { timestamps: true });
+
+export const SessionType = mongoose.model("SessionType", sessionTypeSchema);

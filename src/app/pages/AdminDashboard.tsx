@@ -17,7 +17,7 @@ import {
   Calendar, MapPin
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
-import type { CarouselSlide, BookRequest } from "../context/AppContext";
+import type { CarouselSlide, BookRequest, SessionType } from "../context/AppContext";
 import { toast } from "sonner";
 import { api } from "../services/api";
 import ImageUploader from "../components/ImageUploader";
@@ -1140,7 +1140,7 @@ function AnalyticsSection() {
 }
 // ── Human Library Section ───────────────────────────────────────────────────
 function HumanLibrarySection() {
-  const { livingBooks, setLivingBooks, livingBookSessions } = useApp();
+  const { livingBooks, setLivingBooks, livingBookSessions, sessionTypes } = useApp();
   const [showModal, setShowModal] = useState(false);
   const [isAdding, setIsAdding] = useState(true);
   const [editingBook, setEditingBook] = useState<any>(null);
@@ -1261,22 +1261,22 @@ function HumanLibrarySection() {
 
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-bold mb-4">Session Types</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">Session Types</h3>
+              <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Plus size={16} /></button>
+            </div>
             <div className="grid grid-cols-2 gap-3">
-              {[
-                { type: "In-person", icon: "🏛", desc: "Visit Nalian library. 30–45 min." },
-                { type: "Online", icon: "💻", desc: "Join via Zoom/Meet from anywhere." },
-                { type: "Field visit", icon: "🌿", desc: "For researchers & journalists." },
-                { type: "Group session", icon: "👥", desc: "For schools, NGOs, or teams." },
-              ].map((t) => (
-                <div key={t.type} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+              {(sessionTypes || []).map((t: SessionType) => (
+                <div key={t._id || t.id} className="p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                  <button className="absolute top-1 right-1 p-1 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={12} /></button>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{t.icon}</span>
-                    <span className="text-xs font-bold text-gray-900">{t.type}</span>
+                    <span className="text-xs font-bold text-gray-900">{t.title}</span>
                   </div>
-                  <p className="text-[10px] text-gray-500 leading-tight">{t.desc}</p>
+                  <p className="text-[10px] text-gray-500 leading-tight">{t.description}</p>
                 </div>
               ))}
+              {(sessionTypes || []).length === 0 && <p className="text-[10px] text-gray-400 text-center py-2 col-span-2">No types defined.</p>}
             </div>
           </div>
 
@@ -2528,6 +2528,7 @@ export default function AdminDashboard() {
     "human-library": "Human Library",
     blogs: "Blog Management",
     events: "Event Management",
+    users: "User Management",
     settings: "Settings",
   };
 

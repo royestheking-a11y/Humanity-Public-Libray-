@@ -59,7 +59,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 import Book from "./models/Book.js";
 import User from "./models/User.js";
 import { Event, BlogPost, Testimonial } from "./models/Content.js";
-import { VolunteerRole, BookRequest, Payment, VolunteerApplication, LivingBookSession } from "./models/Operations.js";
+import { VolunteerRole, BookRequest, Payment, VolunteerApplication, LivingBookSession, SessionType } from "./models/Operations.js";
 import { CarouselSlide, LivingBook, Badge, Stat, DonationTier, Leaderboard } from "./models/Extras.js";
 
 // Generic CRUD helper
@@ -153,6 +153,7 @@ createCRUD(DonationTier, "donation-tiers");
 createCRUD(Leaderboard, "leaderboard");
 createCRUD(VolunteerApplication, "volunteer-applications");
 createCRUD(LivingBookSession, "living-book-sessions");
+createCRUD(SessionType, "session-types");
 
 // --- Auth Routes ---
 
@@ -181,7 +182,17 @@ app.post("/api/seed/human-library", async (req, res) => {
     ];
     await LivingBookSession.deleteMany({});
     await LivingBookSession.insertMany(sessionData);
-    
+
+    // Seed Session Types
+    const sessionTypesData = [
+      { title: "In-person", icon: "🏛", description: "Visit Nalian library. Sit with your chosen book. 30–45 min." },
+      { title: "Online", icon: "💻", description: "Join via Zoom or Google Meet from anywhere in the world." },
+      { title: "Field visit", icon: "🌿", description: "Researchers & journalists — visit the coastal community directly." },
+      { title: "Group session", icon: "👥", description: "For schools, NGOs, or teams. Multiple books at once." }
+    ];
+    await SessionType.deleteMany({});
+    await SessionType.insertMany(sessionTypesData);
+
     // Also reset all books to available to fix the "1 borrowed" issue
     await Book.updateMany({}, { available: true });
 

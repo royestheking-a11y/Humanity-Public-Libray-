@@ -135,6 +135,14 @@ export interface LivingBookSession {
   status: "pending" | "approved" | "rejected";
 }
 
+export interface SessionType {
+  _id?: string;
+  id?: string;
+  title: string;
+  icon: string;
+  description: string;
+}
+
 export interface BlogPost {
   _id?: string;
   id?: string;
@@ -288,6 +296,7 @@ interface AppContextType {
   events: EventRecord[]; setEvents: (v: EventRecord[]) => void;
   livingBooks: LivingBook[]; setLivingBooks: (v: LivingBook[]) => void;
   livingBookSessions: LivingBookSession[]; setLivingBookSessions: (v: LivingBookSession[]) => void;
+  sessionTypes: SessionType[]; setSessionTypes: (v: SessionType[]) => void;
   carouselSlides: CarouselSlide[]; setCarouselSlides: (v: CarouselSlide[]) => void;
   bookRequests: BookRequest[]; setBookRequests: (v: BookRequest[]) => void;
   payments: PaymentRecord[]; setPayments: (v: PaymentRecord[]) => void;
@@ -329,6 +338,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [livingBooks, setLivingBooks] = useState<LivingBook[]>([]);
   const [livingBookSessions, setLivingBookSessions] = useState<LivingBookSession[]>([]);
+  const [sessionTypes, setSessionTypes] = useState<SessionType[]>([]);
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
   const [bookRequests, setBookRequests] = useState<BookRequest[]>([]);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
@@ -371,6 +381,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           api.get("stats"),
           api.get("volunteer-roles"),
           api.get("living-book-sessions"),
+          api.get("session-types"),
         ]);
 
         const data = results.map((res, i) => {
@@ -381,7 +392,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           return arrayIndices.includes(i) ? [] : null;
         });
 
-        const [b, u, blogs, ev, lb, slides, reqs, pays, stTiers, vApps, lBoard, bBadges, st, vRoles, lbSessions] = data;
+        const [b, u, blogs, ev, lb, slides, reqs, pays, stTiers, vApps, lBoard, bBadges, st, vRoles, lbSessions, sTypes] = data;
 
         if (b) setBooks(b);
         if (u) setUsers(u);
@@ -398,6 +409,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (st) setStats(Array.isArray(st) ? (st[0] || null) : st);
         if (vRoles) setVolunteerRoles(vRoles);
         if (lbSessions) setLivingBookSessions(lbSessions);
+        if (sTypes) setSessionTypes(sTypes);
       } catch (err) {
         console.error("Critical error in fetchData:", err);
       } finally {
@@ -521,7 +533,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       volunteerApplications, addVolunteerApplication,
       userStreak, userPoints, addPoints, addDonation, isAdmin, setIsAdmin,
       isLoading,
-      books, setBooks, users, setUsers, blogPosts, setBlogPosts, events, setEvents, livingBooks, setLivingBooks, livingBookSessions, setLivingBookSessions, carouselSlides, setCarouselSlides, bookRequests, setBookRequests, payments, setPayments, donationTiers, setDonationTiers, volunteerRoles, setVolunteerRoles, leaderboard, setLeaderboard, badges, setBadges, stats, setStats,
+      books, setBooks, users, setUsers, blogPosts, setBlogPosts, events, setEvents, livingBooks, setLivingBooks, livingBookSessions, setLivingBookSessions, sessionTypes, setSessionTypes, carouselSlides, setCarouselSlides, bookRequests, setBookRequests, payments, setPayments, donationTiers, setDonationTiers, volunteerRoles, setVolunteerRoles, leaderboard, setLeaderboard, badges, setBadges, stats, setStats,
       currentUser, setCurrentUser, login, register, googleLogin, logout,
       addBookRequest, updateBookRequest, addPayment, updatePayment, addUser, updateUser
     }}>
