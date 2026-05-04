@@ -254,7 +254,7 @@ export default function Library() {
                     style={{ background: "#fff", boxShadow: "0 4px 20px rgba(37,99,235,0.07)", border: "1px solid rgba(37,99,235,0.05)" }}>
                     {viewMode === "grid" ? (
                       <>
-                        <div className="relative h-48 overflow-hidden">
+                        <Link to={`/book/${bookId}`} className="block relative h-48 overflow-hidden">
                           <img src={book.cover} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute top-2.5 right-2.5 flex gap-1.5">
@@ -268,10 +268,12 @@ export default function Library() {
                               {book.available ? t("lib.available") : t("lib.unavailable")}
                             </span>
                           </div>
-                        </div>
+                        </Link>
                         <div className="p-4">
-                          <h3 className="mb-0.5 line-clamp-1" style={{ fontFamily: FH, fontWeight: 600, color: "#060F1E" }}>{book.title}</h3>
-                          <p className="text-xs text-gray-400 mb-2" style={{ fontFamily: F }}>{book.author}</p>
+                          <Link to={`/book/${bookId}`} className="block group/title mb-0.5">
+                            <h3 className="line-clamp-1 group-hover/title:text-blue-600 transition-colors" style={{ fontFamily: FH, fontWeight: 600, color: "#060F1E" }}>{book.title}</h3>
+                            <p className="text-xs text-gray-400 mb-2" style={{ fontFamily: F }}>{book.author}</p>
+                          </Link>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-0.5">
                               {[...Array(5)].map((_, j) => <Star key={j} size={11} fill={j < Math.floor(book.rating) ? "#60A5FA" : "none"} stroke={j < Math.floor(book.rating) ? "#60A5FA" : "#ccc"} />)}
@@ -300,11 +302,13 @@ export default function Library() {
                       </>
                     ) : (
                       <>
-                        <img src={book.cover} alt={book.title} className="w-14 h-20 rounded-xl object-cover flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="line-clamp-1 mb-0.5" style={{ fontFamily: FH, fontWeight: 600, color: "#060F1E" }}>{book.title}</h3>
+                        <Link to={`/book/${bookId}`}>
+                          <img src={book.cover} alt={book.title} className="w-14 h-20 rounded-xl object-cover flex-shrink-0" />
+                        </Link>
+                        <Link to={`/book/${bookId}`} className="flex-1 min-w-0 group/title">
+                          <h3 className="line-clamp-1 mb-0.5 group-hover/title:text-blue-600 transition-colors" style={{ fontFamily: FH, fontWeight: 600, color: "#060F1E" }}>{book.title}</h3>
                           <p className="text-xs text-gray-400" style={{ fontFamily: F }}>{book.author} · {book.genre}</p>
-                        </div>
+                        </Link>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="px-2 py-1 rounded-full text-xs font-medium text-white" style={{ background: book.available ? "rgba(34,197,94,0.85)" : "rgba(239,68,68,0.85)" }}>
                             {book.available ? t("lib.available") : t("lib.unavailable")}

@@ -149,35 +149,39 @@ export default function Home() {
                 className="group rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-300"
                 style={{ background: "#fff", boxShadow: "0 4px 24px rgba(37,99,235,0.08)", border: "1px solid rgba(37,99,235,0.06)" }}
               >
-                <div className="relative h-52 overflow-hidden">
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    {book.audioAvailable && (
-                      <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white" style={{ background: "rgba(37,99,235,0.9)" }}>
-                        <Headphones size={10} /> {t("home.featured.audio")}
+                <Link to={`/book/${book._id || book.id}`} className="block">
+                  <div className="relative h-52 overflow-hidden">
+                    <img
+                      src={book.cover}
+                      alt={book.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute top-3 right-3 flex gap-2">
+                      {book.audioAvailable && (
+                        <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white" style={{ background: "rgba(37,99,235,0.9)" }}>
+                          <Headphones size={10} /> {t("home.featured.audio")}
+                        </span>
+                      )}
+                      <span className="px-2 py-1 rounded-full text-xs font-medium text-white"
+                        style={{ background: book.available ? "rgba(34,197,94,0.9)" : "rgba(239,68,68,0.9)" }}>
+                        {book.available ? t("home.featured.available") : t("home.featured.unavailable")}
                       </span>
-                    )}
-                    <span className="px-2 py-1 rounded-full text-xs font-medium text-white"
-                      style={{ background: book.available ? "rgba(34,197,94,0.9)" : "rgba(239,68,68,0.9)" }}>
-                      {book.available ? t("home.featured.available") : t("home.featured.unavailable")}
-                    </span>
+                    </div>
+                    <div className="absolute bottom-3 left-3">
+                      <span className="px-2 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(29,78,216,0.85)", color: "#60A5FA" }}>
+                        {book.genre}
+                      </span>
+                    </div>
                   </div>
-                  <div className="absolute bottom-3 left-3">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium" style={{ background: "rgba(29,78,216,0.85)", color: "#60A5FA" }}>
-                      {book.genre}
-                    </span>
-                  </div>
-                </div>
+                </Link>
                 <div className="p-5">
-                  <h3 className="mb-1 line-clamp-1" style={{ fontFamily: FH, fontWeight: 600, fontSize: "1rem", color: "#060F1E" }}>
-                    {book.title}
-                  </h3>
-                  <p className="text-gray-500 text-sm mb-3" style={{ fontFamily: F }}>{book.author}</p>
+                  <Link to={`/book/${book._id || book.id}`} className="block group/title">
+                    <h3 className="mb-1 line-clamp-1 group-hover/title:text-blue-600 transition-colors" style={{ fontFamily: FH, fontWeight: 600, fontSize: "1rem", color: "#060F1E" }}>
+                      {book.title}
+                    </h3>
+                    <p className="text-gray-500 text-sm mb-3" style={{ fontFamily: F }}>{book.author}</p>
+                  </Link>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, j) => (
