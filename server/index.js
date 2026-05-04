@@ -4,7 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import { v2 as cloudinary } from "cloudinary";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 
@@ -187,6 +190,42 @@ app.post("/api/auth/admin/login", async (req, res) => {
     res.json({ user, token });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Google Auth
+app.post("/api/auth/google", async (req, res) => {
+  const { accessToken } = req.body;
+  try {
+    // Fetch user info from Google API using access token
+    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
+    const payload = await response.json();
+    
+    if (!payload || payload.error) throw new Error("Invalid token");
+    const { sub, email, name } = payload;
+
+    let user = await User.findOne({ $or: [{ googleId: sub }, { email }] });
+
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        googleId: sub,
+        role: email.toLowerCase().includes("admin") ? "admin" : "member",
+        joinDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
+        avatarColor: "#2563EB",
+        totalBorrowed: 0,
+      });
+      await user.save();
+    } else if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    res.json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: "Google authentication failed" });
   }
 });
 

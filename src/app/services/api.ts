@@ -64,5 +64,17 @@ export const api = {
       throw new Error(error.error || "Registration failed");
     }
     return res.json();
+  },
+  googleLogin: async (accessToken: string) => {
+    const res = await fetch(`${API_URL}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error || "Google login failed");
+    }
+    return res.json();
   }
 };

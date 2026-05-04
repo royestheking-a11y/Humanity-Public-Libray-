@@ -285,6 +285,7 @@ interface AppContextType {
   setCurrentUser: (u: AppUser | null) => void;
   login: (credentials: any) => Promise<void>;
   register: (userData: any) => Promise<void>;
+  googleLogin: (accessToken: string) => Promise<void>;
   logout: () => void;
 
   // ── Methods ──
@@ -445,6 +446,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setIsAdmin(user.role === "admin");
   };
 
+  const googleLogin = async (accessToken: string) => {
+    const { user, token } = await api.googleLogin(accessToken);
+    if (token) localStorage.setItem("hpl_token", token);
+    setCurrentUser(user);
+    setIsAdmin(user.role === "admin");
+  };
+
   const logout = () => {
     setCurrentUser(null);
     setIsAdmin(false);
@@ -494,7 +502,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       userStreak, userPoints, addPoints, addDonation, isAdmin, setIsAdmin,
       isLoading,
       books, setBooks, users, setUsers, blogPosts, setBlogPosts, events, setEvents, livingBooks, setLivingBooks, carouselSlides, setCarouselSlides, bookRequests, setBookRequests, payments, setPayments, donationTiers, setDonationTiers, volunteerRoles, setVolunteerRoles, leaderboard, setLeaderboard, badges, setBadges, stats, setStats,
-      currentUser, setCurrentUser, login, register, logout,
+      currentUser, setCurrentUser, login, register, googleLogin, logout,
       addBookRequest, updateBookRequest, addPayment, updatePayment, addUser, updateUser
     }}>
       {children}
