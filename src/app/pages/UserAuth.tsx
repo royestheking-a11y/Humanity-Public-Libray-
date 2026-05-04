@@ -7,12 +7,9 @@ import {
 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { useLang } from "../context/LangContext";
-import type { AppUser } from "../context/AppContext";
-
-const AVATAR_COLORS = ["#2563EB", "#22C55E", "#60A5FA", "#6B7280", "#7C3AED", "#1D4ED8"];
 
 export default function UserAuth() {
-  const { users, addUser, setCurrentUser, login, register } = useApp();
+  const { login, register } = useApp();
   const { t, isBn, bnFont } = useLang();
   const F = isBn ? bnFont : "'Inter', sans-serif";
   const FH = isBn ? bnFont : "'Sora', sans-serif";
