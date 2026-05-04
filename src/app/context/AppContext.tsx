@@ -55,6 +55,7 @@ export interface AppUser {
   totalBorrowed: number;
   avatarColor: string;
   role?: string;
+  status?: "active" | "disabled";
   points?: number;
   streak?: number;
   savedBooks?: string[];

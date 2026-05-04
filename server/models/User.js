@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   googleId: { type: String },
   studentId: { type: String },
   role: { type: String, enum: ["user", "member", "admin"], default: "user" },
+  status: { type: String, enum: ["active", "disabled"], default: "active" },
   joinDate: { type: String },
   totalBorrowed: { type: Number, default: 0 },
   avatarColor: { type: String, default: "#2563EB" },

@@ -25,7 +25,7 @@ import { DashboardSkeleton } from "../components/Skeleton";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 // Synchronized with MongoDB and Cloudinary
-type Section = "overview" | "books" | "borrowing" | "payments" | "donations" | "volunteers" | "carousel" | "analytics" | "human-library" | "blogs" | "events" | "settings";
+type Section = "overview" | "books" | "users" | "borrowing" | "payments" | "donations" | "volunteers" | "carousel" | "analytics" | "human-library" | "blogs" | "events" | "settings";
 
 interface BookFormData {
   title: string; author: string; genre: string; language: string;
@@ -38,13 +38,14 @@ interface BookFormData {
 const NAV_ITEMS = [
   { id: "overview" as Section, label: "Overview", icon: LayoutDashboard },
   { id: "books" as Section, label: "Books", icon: BookOpen },
+  { id: "users" as Section, label: "Users", icon: Users },
   { id: "borrowing" as Section, label: "Borrowing", icon: Package },
   { id: "payments" as Section, label: "Payments", icon: Wallet },
   { id: "donations" as Section, label: "Donations", icon: Heart },
   { id: "volunteers" as Section, label: "Volunteers", icon: UserCheck },
   { id: "carousel" as Section, label: "Carousel", icon: Layers },
   { id: "analytics" as Section, label: "Analytics", icon: BarChart2 },
-  { id: "human-library" as Section, label: "Human Library", icon: Users },
+  { id: "human-library" as Section, label: "Human Library", icon: Sliders },
   { id: "blogs" as Section, label: "Blogs", icon: FileText },
   { id: "events" as Section, label: "Events", icon: Calendar },
   { id: "settings" as Section, label: "Settings", icon: Settings },
@@ -1867,13 +1868,186 @@ function SettingsSection() {
 }
 
 // ── Borrowing Section ──────────────────────────────────────────────────────────
+function UsersSection() {
+  const { users, updateUser } = useApp();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  const filtered = users
+    .filter(u => filter === "all" || u.role === filter || (filter === "disabled" && u.status === "disabled"))
+    .filter(u => 
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      u.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const handleToggleStatus = async (user: any) => {
+    const newStatus = user.status === "disabled" ? "active" : "disabled";
+    await updateUser(user._id || user.id, { status: newStatus });
+    toast.success(`User ${newStatus === "disabled" ? "disabled" : "enabled"} successfully`);
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>User Management</h2>
+          <p className="text-sm text-gray-500">Manage user accounts, roles, and access status.</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
+          {["all", "member", "admin", "disabled"].map((f) => (
+            <button key={f} onClick={() => setFilter(f)} className="px-4 py-2 rounded-xl text-sm font-semibold capitalize whitespace-nowrap transition-all"
+              style={{ background: filter === f ? "#2563EB" : "#fff", color: filter === f ? "#fff" : "#6B7280", fontFamily: "'Inter', sans-serif", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+              {f}
+            </button>
+          ))}
+        </div>
+        
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <input 
+            type="text"
+            placeholder="Search users..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 outline-none focus:border-blue-500 transition-all text-sm"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl overflow-hidden bg-white" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.06)" }}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/50">
+                {["User", "Role", "Joined", "Borrowed", "Status", "Actions"].map((h) => (
+                  <th key={h} className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((user) => (
+                <tr key={user._id || user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ background: user.avatarColor || "#2563EB" }}>
+                        {user.name[0]}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 text-sm">{user.name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600">
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="p-4 text-sm text-gray-600">{user.joinDate}</td>
+                  <td className="p-4 text-sm text-gray-600">{user.totalBorrowed} books</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${user.status === "disabled" ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+                      {user.status || "active"}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <button onClick={() => setSelectedUser(user)} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" title="View Details">
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => handleToggleStatus(user)} className={`p-2 transition-colors ${user.status === "disabled" ? "text-green-500 hover:text-green-600" : "text-gray-400 hover:text-red-600"}`} title={user.status === "disabled" ? "Enable" : "Disable"}>
+                        {user.status === "disabled" ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="p-20 text-center text-gray-400">
+              <Users size={48} className="mx-auto mb-4 opacity-20" />
+              <p>No users found matching your search.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* User Details Modal */}
+      <AnimatePresence>
+        {selectedUser && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="w-full max-w-lg bg-white rounded-3xl overflow-hidden shadow-2xl">
+              <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                <h3 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Sora', sans-serif" }}>User Details</h3>
+                <button onClick={() => setSelectedUser(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors"><X size={20} className="text-gray-500" /></button>
+              </div>
+              <div className="p-8">
+                <div className="flex items-center gap-6 mb-8">
+                  <div className="w-20 h-20 rounded-3xl flex items-center justify-center text-white text-3xl font-bold" style={{ background: selectedUser.avatarColor || "#2563EB" }}>
+                    {selectedUser.name[0]}
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">{selectedUser.name}</h2>
+                    <p className="text-gray-500">{selectedUser.email}</p>
+                    <p className="text-xs font-bold text-blue-600 uppercase mt-1">{selectedUser.role}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Phone</p>
+                    <p className="text-sm font-medium">{selectedUser.phone || "N/A"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Join Date</p>
+                    <p className="text-sm font-medium">{selectedUser.joinDate}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Books Borrowed</p>
+                    <p className="text-sm font-medium">{selectedUser.totalBorrowed}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Current Points</p>
+                    <p className="text-sm font-medium text-blue-600 font-bold">{selectedUser.points || 0} pts</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-gray-100 flex gap-3">
+                  <button onClick={() => { handleToggleStatus(selectedUser); setSelectedUser(null); }} className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${selectedUser.status === "disabled" ? "bg-green-600 text-white hover:bg-green-700" : "bg-red-50 text-red-600 hover:bg-red-100"}`}>
+                    {selectedUser.status === "disabled" ? "Enable Account" : "Disable Account"}
+                  </button>
+                  <button onClick={() => setSelectedUser(null)} className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold hover:bg-gray-200">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 function BorrowingSection() {
   const { bookRequests, updateBookRequest } = useApp();
   const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectNote, setRejectNote] = useState("");
 
-  const filtered = filter === "all" ? bookRequests : bookRequests.filter((r) => r.status === filter);
+  const filtered = (filter === "all" ? bookRequests : bookRequests.filter((r) => r.status === filter))
+    .filter(r => 
+      r.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      r.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   const handleApprove = async (req: BookRequest) => {
     await updateBookRequest((req._id || req.id)!, { status: "borrowed", approvedDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) });
@@ -1926,14 +2100,28 @@ function BorrowingSection() {
         ))}
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-2 overflow-x-auto">
-        {["all", "pending", "borrowed", "returned", "rejected"].map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className="px-4 py-2 rounded-xl text-sm font-semibold capitalize whitespace-nowrap transition-all"
-            style={{ background: filter === f ? "#2563EB" : "#fff", color: filter === f ? "#fff" : "#6B7280", fontFamily: "'Inter', sans-serif", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-            {f} {f === "pending" && counts.pending > 0 && <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs" style={{ background: "rgba(255,255,255,0.25)" }}>{counts.pending}</span>}
-          </button>
-        ))}
+      {/* Filter and Search */}
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0">
+          {["all", "pending", "borrowed", "returned", "rejected"].map((f) => (
+            <button key={f} onClick={() => setFilter(f)} className="px-4 py-2 rounded-xl text-sm font-semibold capitalize whitespace-nowrap transition-all"
+              style={{ background: filter === f ? "#2563EB" : "#fff", color: filter === f ? "#fff" : "#6B7280", fontFamily: "'Inter', sans-serif", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+              {f} {f === "pending" && counts.pending > 0 && <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs" style={{ background: "rgba(255,255,255,0.25)" }}>{counts.pending}</span>}
+            </button>
+          ))}
+        </div>
+        
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+          <input 
+            type="text"
+            placeholder="Search by book or user..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-gray-200 outline-none focus:border-blue-500 transition-all text-sm"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          />
+        </div>
       </div>
 
       <div className="rounded-2xl overflow-hidden bg-white" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.06)" }}>
@@ -2347,6 +2535,7 @@ export default function AdminDashboard() {
     switch (section) {
       case "overview": return <OverviewSection />;
       case "books": return <BooksSection />;
+      case "users": return <UsersSection />;
       case "borrowing": return <BorrowingSection />;
       case "payments": return <AdminPaymentsSection />;
       case "donations": return <DonationsSection />;
