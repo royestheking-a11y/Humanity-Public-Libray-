@@ -168,23 +168,6 @@ export default function UserAuth() {
                 <h1 className="text-white mb-1" style={{ fontFamily: FH, fontWeight: 700, fontSize: "1.8rem" }}>{t("auth.welcome")}</h1>
                 <p className="mb-8" style={{ color: "rgba(255,255,255,0.35)", fontFamily: F }}>{t("auth.welcomeSub")}</p>
                 
-                {/* Google Login Button */}
-                <button 
-                  onClick={() => gLogin()}
-                  className="w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-3 transition-all hover:bg-white/10 mb-6"
-                  style={googleBtnStyle}
-                >
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" className="w-5 h-5" />
-                  {isBn ? "গুগল দিয়ে চালিয়ে যান" : "Continue with Google"}
-                </button>
-
-                <div className="relative mb-8 text-center">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-                  <span className="relative px-4 text-xs uppercase tracking-widest bg-[#060F1E]" style={{ color: "rgba(255,255,255,0.2)", fontFamily: F }}>
-                    {isBn ? "অথবা ইমেল" : "OR EMAIL"}
-                  </span>
-                </div>
-
                 <div className="space-y-4">
                   <div>
                     <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: "rgba(255,255,255,0.35)", fontFamily: F }}>{t("auth.email")}</label>
@@ -220,6 +203,24 @@ export default function UserAuth() {
                     {loginLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : t("auth.loginBtn")}
                   </button>
                 </div>
+
+                <div className="relative my-8 text-center">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+                  <span className="relative px-4 text-xs uppercase tracking-widest bg-[#060F1E]" style={{ color: "rgba(255,255,255,0.2)", fontFamily: F }}>
+                    {isBn ? "অথবা গুগল দিয়ে" : "OR WITH GOOGLE"}
+                  </span>
+                </div>
+
+                {/* Google Login Button (Now at bottom) */}
+                <button 
+                  onClick={() => gLogin()}
+                  className="w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-3 transition-all hover:bg-white/10 mb-6"
+                  style={googleBtnStyle}
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" className="w-5 h-5" />
+                  {isBn ? "গুগল দিয়ে চালিয়ে যান" : "Continue with Google"}
+                </button>
+
                 <p className="text-center mt-6 text-sm" style={{ color: "rgba(255,255,255,0.35)", fontFamily: F }}>
                   {t("auth.noAccount")}{" "}
                   <button onClick={() => setMode("register")} style={{ color: "#60A5FA", fontWeight: 600 }}>{t("auth.switchRegister")}</button>
@@ -230,23 +231,6 @@ export default function UserAuth() {
                 <h1 className="text-white mb-1" style={{ fontFamily: FH, fontWeight: 700, fontSize: "1.8rem" }}>{t("auth.welcomeNew")}</h1>
                 <p className="mb-6" style={{ color: "rgba(255,255,255,0.35)", fontFamily: F }}>{t("auth.welcomeNewSub")}</p>
                 
-                {/* Google Sign Up Button */}
-                <button 
-                  onClick={() => gLogin()}
-                  className="w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-3 transition-all hover:bg-white/10 mb-6"
-                  style={googleBtnStyle}
-                >
-                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" className="w-5 h-5" />
-                  {isBn ? "গুগল দিয়ে সাইন আপ করুন" : "Sign up with Google"}
-                </button>
-
-                <div className="relative mb-6 text-center">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-                  <span className="relative px-4 text-xs uppercase tracking-widest bg-[#060F1E]" style={{ color: "rgba(255,255,255,0.2)", fontFamily: F }}>
-                    {isBn ? "অথবা ইমেল" : "OR EMAIL"}
-                  </span>
-                </div>
-
                 {regSuccess && (
                   <div className="flex items-center gap-2 px-4 py-3 rounded-xl mb-4" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
                     <CheckCircle size={14} style={{ color: "#22C55E" }} />
@@ -297,6 +281,24 @@ export default function UserAuth() {
                     {regLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : t("auth.registerBtn")}
                   </button>
                 </div>
+
+                <div className="relative my-6 text-center">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+                  <span className="relative px-4 text-xs uppercase tracking-widest bg-[#060F1E]" style={{ color: "rgba(255,255,255,0.2)", fontFamily: F }}>
+                    {isBn ? "অথবা গুগল দিয়ে" : "OR WITH GOOGLE"}
+                  </span>
+                </div>
+
+                {/* Google Sign Up Button (Now at bottom) */}
+                <button 
+                  onClick={() => gLogin()}
+                  className="w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-3 transition-all hover:bg-white/10 mb-6"
+                  style={googleBtnStyle}
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" className="w-5 h-5" />
+                  {isBn ? "গুগল দিয়ে সাইন আপ করুন" : "Sign up with Google"}
+                </button>
+
                 <p className="text-center mt-5 text-sm" style={{ color: "rgba(255,255,255,0.35)", fontFamily: F }}>
                   {t("auth.hasAccount")}{" "}
                   <button onClick={() => setMode("login")} style={{ color: "#60A5FA", fontWeight: 600 }}>{t("auth.switchLogin")}</button>
