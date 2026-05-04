@@ -113,6 +113,15 @@ const TRANSLATIONS = {
     "home.newsletter.placeholder": "Enter your email",
     "home.newsletter.btn": "Subscribe Free",
     "home.newsletter.noSpam": "No spam, ever. Unsubscribe anytime.",
+    // ── Mission Section ──────────────────────────────────────────────────────
+    "mission.label": "SURVIVING THE TIDE",
+    "mission.title": "From Devastation to Empowerment",
+    "mission.p1": "Since the Bhola Cyclone (1970) and storms like Cyclone Sidr (2007), Cyclone Aila (2009), Cyclone Amphan (2020), and Cyclone Mocha (2023), our coastal communities in Khulna have faced repeated devastation.",
+    "mission.p2": "Thousands of homes lost, rivers eroded, and over 50,000 people forced to migrate—yet hope survives through education.",
+    "mission.p3": "Support Humanity Public Library today—help children learn, women earn, and communities rebuild stronger against climate disasters.",
+    "mission.btn.support": "Support Our Mission",
+    "mission.btn.volunteer": "Join as Volunteer",
+    "mission.migrants": "Forced Migrants",
     // ── Library ───────────────────────────────────────────────────────────────
     "lib.title": "Digital Library",
     "lib.subtitle": "Explore our collection of",
@@ -479,6 +488,15 @@ const TRANSLATIONS = {
     "home.newsletter.placeholder": "আপনার ইমেইল লিখুন",
     "home.newsletter.btn": "বিনামূল্যে সাবস্ক্রাইব করুন",
     "home.newsletter.noSpam": "স্প্যাম নেই। যেকোনো সময় আনসাবস্ক্রাইব করুন।",
+    // ── Mission Section ──────────────────────────────────────────────────────
+    "mission.label": "জোয়ারের বিরুদ্ধে টিকে থাকা",
+    "mission.title": "বিপর্যয় থেকে ক্ষমতায়ন",
+    "mission.p1": "১৯৭০ সালের ভোলা ঘূর্ণিঝড় এবং সিডর (২০০৭), আইলা (২০০৯), আম্পান (২০২০), ও মোখা (২০২৩) এর মতো ঝড়ের পর থেকে খুলনার উপকূলীয় এলাকা বারবার বিপর্যয়ের মুখে পড়েছে।",
+    "mission.p2": "হাজার হাজার ঘরবাড়ি ধ্বংস হয়েছে, নদী ভাঙন হয়েছে এবং ৫০,০০০-এরও বেশি মানুষ বাস্তুচ্যুত হয়েছে—তবুও শিক্ষার মাধ্যমে আশা টিকে আছে।",
+    "mission.p3": "আজই হিউম্যানিটি পাবলিক লাইব্রেরিকে সমর্থন করুন—শিশুদের শিখতে, নারীদের উপার্জন করতে এবং জলবায়ু বিপর্যয়ের বিরুদ্ধে শক্তিশালীভাবে গড়ে উঠতে সাহায্য করুন।",
+    "mission.btn.support": "আমাদের মিশনে সমর্থন দিন",
+    "mission.btn.volunteer": "স্বেচ্ছাসেবক হিসেবে যোগ দিন",
+    "mission.migrants": "বাস্তুচ্যুত মানুষ",
     // ── Library ───────────────────────────────────────────────────────────────
     "lib.title": "ডিজিটাল গ্রন্থাগার",
     "lib.subtitle": "আমাদের সংগ্রহ অন্বে���ণ করুন",

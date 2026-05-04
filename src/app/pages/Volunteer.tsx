@@ -101,7 +101,7 @@ export default function Volunteer() {
               <h2 className="mb-2 text-center" style={{ fontFamily: FH, fontWeight: 700, fontSize: "1.5rem", color: "#060F1E" }}>
                 {t("vol.chooseRole")}
               </h2>
-              <p className="text-center text-gray-500 mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>Select the role that best matches your skills and availability.</p>
+                  <p className="text-center text-gray-500 mb-8" style={{ fontFamily: F }}>{isBn ? "আপনার দক্ষতা এবং সময়ের সাথে সবচেয়ে সামঞ্জস্যপূর্ণ ভূমিকাটি নির্বাচন করুন।" : "Select the role that best matches your skills and availability."}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {volunteerRoles.map((role, i) => (
                   <motion.div
@@ -123,10 +123,10 @@ export default function Volunteer() {
                       {role.icon}
                     </div>
                     <h3 className="font-semibold mb-1" style={{ fontFamily: FH, color: selectedRole === role.title ? "#fff" : "#060F1E", fontSize: "0.95rem" }}>{role.title}</h3>
-                    <p className="text-gray-500 text-sm mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>{role.description}</p>
+                    <p className="text-gray-500 text-sm mb-4" style={{ fontFamily: F }}>{role.description}</p>
                     <div className="flex items-center gap-2 mb-3">
                       <Clock size={13} className="text-gray-400" />
-                      <span className="text-xs text-gray-400" style={{ fontFamily: "'Inter', sans-serif" }}>{role.commitment}</span>
+                      <span className="text-xs text-gray-400" style={{ fontFamily: F }}>{role.commitment}</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {role.skills.slice(0, 2).map((skill) => (
@@ -174,10 +174,10 @@ export default function Volunteer() {
                     <div key={app.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
                       <div>
                         <p className="text-sm font-semibold" style={{ fontFamily: F, color: "#060F1E" }}>{app.role}</p>
-                        <p className="text-xs text-gray-400" style={{ fontFamily: "'Inter', sans-serif" }}>Applied on {app.date}</p>
+                        <p className="text-xs text-gray-400" style={{ fontFamily: F }}>Applied on {app.date}</p>
                       </div>
-                      <span className="text-xs px-3 py-1 rounded-full" style={{ background: "#60A5FA20", color: "#2563EB", fontFamily: "'Inter', sans-serif" }}>
-                        Under Review
+                      <span className="text-xs px-3 py-1 rounded-full" style={{ background: "#60A5FA20", color: "#2563EB", fontFamily: F }}>
+                        {isBn ? "পর্যালোচনাধীন" : "Under Review"}
                       </span>
                     </div>
                   ))}
@@ -188,31 +188,31 @@ export default function Volunteer() {
         ) : (
           /* Application Form */
           <div className="max-w-xl mx-auto">
-            <button onClick={() => setShowForm(false)} className="flex items-center gap-2 mb-6 text-sm text-gray-500 hover:text-gray-800 transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
-              ← Back to Roles
+            <button onClick={() => setShowForm(false)} className="flex items-center gap-2 mb-6 text-sm text-gray-500 hover:text-gray-800 transition-colors" style={{ fontFamily: F }}>
+              {isBn ? "← ভূমিকায় ফিরে যান" : "← Back to Roles"}
             </button>
             <div className="p-8 rounded-3xl bg-white" style={{ boxShadow: "0 8px 40px rgba(0,0,0,0.1)" }}>
               <h2 className="mb-2" style={{ fontFamily: FH, fontWeight: 700, color: "#060F1E", fontSize: "1.5rem" }}>
                 {isBn ? `"${selectedRole}" হিসেবে আবেদন করুন` : `Apply as ${selectedRole}`}
               </h2>
-              <p className="text-gray-500 text-sm mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Fill out the form below. We'll contact you within 3-5 business days.
+              <p className="text-gray-500 text-sm mb-6" style={{ fontFamily: F }}>
+                {isBn ? "নিচের ফর্মটি পূরণ করুন। আমরা ৩-৫ কার্যদিবসের মধ্যে আপনার সাথে যোগাযোগ করব।" : "Fill out the form below. We'll contact you within 3-5 business days."}
               </p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Full Name *</label>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: F }}>{isBn ? "পুরো নাম *" : "Full Name *"}</label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Your full name"
+                    placeholder={isBn ? "আপনার পুরো নাম" : "Your full name"}
                     required
                     className="w-full px-4 py-3 rounded-xl outline-none text-gray-700"
-                    style={{ border: "2px solid #e5e7eb", fontFamily: "'Inter', sans-serif" }}
+                    style={{ border: "2px solid #e5e7eb", fontFamily: F }}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Email Address *</label>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: F }}>{isBn ? "ইমেইল ঠিকানা *" : "Email Address *"}</label>
                   <input
                     type="email"
                     value={form.email}
@@ -220,40 +220,40 @@ export default function Volunteer() {
                     placeholder="your@email.com"
                     required
                     className="w-full px-4 py-3 rounded-xl outline-none text-gray-700"
-                    style={{ border: "2px solid #e5e7eb", fontFamily: "'Inter', sans-serif" }}
+                    style={{ border: "2px solid #e5e7eb", fontFamily: F }}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Phone Number</label>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: F }}>{isBn ? "ফোন নম্বর" : "Phone Number"}</label>
                   <input
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     placeholder="+880 ..."
                     className="w-full px-4 py-3 rounded-xl outline-none text-gray-700"
-                    style={{ border: "2px solid #e5e7eb", fontFamily: "'Inter', sans-serif" }}
+                    style={{ border: "2px solid #e5e7eb", fontFamily: F }}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Relevant Experience</label>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: F }}>{isBn ? "সংশ্লিষ্ট অভিজ্ঞতা" : "Relevant Experience"}</label>
                   <textarea
                     value={form.experience}
                     onChange={(e) => setForm({ ...form, experience: e.target.value })}
-                    placeholder="Tell us about your relevant skills and experience..."
+                    placeholder={isBn ? "আপনার সংশ্লিষ্ট দক্ষতা এবং অভিজ্ঞতা সম্পর্কে আমাদের বলুন..." : "Tell us about your relevant skills and experience..."}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl resize-none outline-none text-gray-700"
-                    style={{ border: "2px solid #e5e7eb", fontFamily: "'Inter', sans-serif" }}
+                    style={{ border: "2px solid #e5e7eb", fontFamily: F }}
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Why do you want to volunteer?</label>
+                  <label className="text-sm font-semibold text-gray-700 block mb-1.5" style={{ fontFamily: F }}>{isBn ? "আপনি কেন স্বেচ্ছাসেবক হতে চান?" : "Why do you want to volunteer?"}</label>
                   <textarea
                     value={form.motivation}
                     onChange={(e) => setForm({ ...form, motivation: e.target.value })}
-                    placeholder="Share your motivation for joining our mission..."
+                    placeholder={isBn ? "আমাদের মিশনে যোগদানের জন্য আপনার অনুপ্রেরণা শেয়ার করুন..." : "Share your motivation for joining our mission..."}
                     rows={4}
                     className="w-full px-4 py-3 rounded-xl resize-none outline-none text-gray-700"
-                    style={{ border: "2px solid #e5e7eb", fontFamily: "'Inter', sans-serif" }}
+                    style={{ border: "2px solid #e5e7eb", fontFamily: F }}
                   />
                 </div>
                 <button

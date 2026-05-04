@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import https from "https";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -320,5 +321,19 @@ app.post("/api/auth/google", async (req, res) => {
 });
 
 app.get("/", (req, res) => res.send("HPL Backend API is running"));
+app.get("/api/health", (req, res) => res.json({ status: "active", timestamp: new Date().toISOString() }));
+
+// --- Self-Ping System (Prevents Render from Sleeping) ---
+const URL = process.env.RENDER_EXTERNAL_URL;
+if (URL) {
+  console.log(`Self-ping system initialized for: ${URL}`);
+  setInterval(() => {
+    https.get(`${URL}/api/health`, (res) => {
+      console.log(`Self-ping successful: ${res.statusCode}`);
+    }).on("error", (err) => {
+      console.error(`Self-ping failed: ${err.message}`);
+    });
+  }, 14 * 60 * 1000); // Ping every 14 minutes
+}
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

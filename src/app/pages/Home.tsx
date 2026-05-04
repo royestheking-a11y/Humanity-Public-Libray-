@@ -74,30 +74,25 @@ export default function Home() {
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} viewport={{ once: true }}>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6" style={{ background: "rgba(37,99,235,0.08)", border: "1px solid rgba(37,99,235,0.2)" }}>
                 <Waves size={16} className="text-blue-600" />
-                <span className="text-sm font-bold text-blue-600" style={{ fontFamily: F }}>SURVIVING THE TIDE</span>
+                <span className="text-sm font-bold text-blue-600" style={{ fontFamily: F }}>{t("mission.label")}</span>
               </div>
               <h2 className="mb-8" style={{ fontFamily: FH, fontWeight: 800, fontSize: "clamp(2rem, 4vw, 3rem)", color: "#060F1E", lineHeight: 1.1 }}>
-                From Devastation <br /> to <span style={{ color: "#2563EB" }}>Empowerment</span>
+                {isBn ? "বিপর্যয় থেকে" : "From Devastation"} <br /> {isBn ? "ক্ষমতায়ন" : "to"} <span style={{ color: "#2563EB" }}>{isBn ? "" : "Empowerment"}</span>
               </h2>
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg" style={{ fontFamily: F }}>
                 <p>
-                  Since the <a href="https://en.wikipedia.org/wiki/1970_Bhola_cyclone" target="_blank" className="text-blue-600 font-bold hover:underline">Bhola Cyclone (1970)</a> and storms like 
-                  <a href="https://en.wikipedia.org/wiki/Cyclone_Sidr" target="_blank" className="text-blue-600 font-bold hover:underline mx-1">Cyclone Sidr (2007)</a>, 
-                  <a href="https://en.wikipedia.org/wiki/Cyclone_Aila" target="_blank" className="text-blue-600 font-bold hover:underline mx-1">Cyclone Aila (2009)</a>, 
-                  <a href="https://en.wikipedia.org/wiki/Cyclone_Amphan" target="_blank" className="text-blue-600 font-bold hover:underline mx-1">Cyclone Amphan (2020)</a>, and 
-                  <a href="https://en.wikipedia.org/wiki/Cyclone_Mocha" target="_blank" className="text-blue-600 font-bold hover:underline mx-1">Cyclone Mocha (2023)</a>, 
-                  our coastal communities in Khulna have faced repeated devastation.
+                  {t("mission.p1")}
                 </p>
                 <p className="font-semibold">
-                  Thousands of homes lost, rivers eroded, and over 50,000 people forced to migrate—yet hope survives through education.
+                  {t("mission.p2")}
                 </p>
                 <p>
-                  Support Humanity Public Library today—help children learn, women earn, and communities rebuild stronger against climate disasters.
+                  {t("mission.p3")}
                 </p>
               </div>
               <div className="mt-10 flex flex-wrap gap-4">
-                <Link to="/donate" className="px-8 py-4 rounded-2xl bg-blue-600 text-white font-bold shadow-xl shadow-blue-200 hover:scale-105 transition-all" style={{ fontFamily: F }}>Support Our Mission</Link>
-                <Link to="/volunteer" className="px-8 py-4 rounded-2xl bg-white border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-all" style={{ fontFamily: F }}>Join as Volunteer</Link>
+                <Link to="/donate" className="px-8 py-4 rounded-2xl bg-blue-600 text-white font-bold shadow-xl shadow-blue-200 hover:scale-105 transition-all" style={{ fontFamily: F }}>{t("mission.btn.support")}</Link>
+                <Link to="/volunteer" className="px-8 py-4 rounded-2xl bg-white border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-all" style={{ fontFamily: F }}>{t("mission.btn.volunteer")}</Link>
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} viewport={{ once: true }} className="relative">
@@ -107,7 +102,7 @@ export default function Home() {
               <div className="absolute -top-6 -right-6 p-8 rounded-3xl bg-white shadow-xl" style={{ border: "1px solid rgba(37,99,235,0.1)" }}>
                 <Droplets size={32} className="text-blue-500 mb-2" />
                 <p className="text-2xl font-bold" style={{ fontFamily: FH, color: "#060F1E" }}>50,000+</p>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest" style={{ fontFamily: F }}>Forced Migrants</p>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest" style={{ fontFamily: F }}>{t("mission.migrants")}</p>
               </div>
             </motion.div>
           </div>
