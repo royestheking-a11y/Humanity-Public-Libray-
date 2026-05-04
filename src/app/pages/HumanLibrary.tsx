@@ -176,7 +176,7 @@ export default function HumanLibrary() {
                     <span className="text-[10px] font-bold uppercase tracking-widest">{session.date.split(" ")[1]}</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-1">{session.bookTitle}</h3>
+                    <h3 className="text-lg font-bold text-white mb-1">{session.bookTitle} — {session.userName}</h3>
                     <div className="flex flex-wrap gap-4 text-xs text-gray-500">
                       <span className="flex items-center gap-1.5"><Clock size={14} /> {session.time}</span>
                       <span className="flex items-center gap-1.5"><MapPin size={14} /> {session.location}</span>

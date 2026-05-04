@@ -1222,13 +1222,15 @@ function HumanLibrarySection() {
               {livingBooks.map((book, i) => (
                 <div key={book.id || i} className="flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+                    <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
                       {IconMap[book.icon] ? (
                         (() => {
                           const Icon = IconMap[book.icon];
                           return <Icon size={20} />;
                         })()
-                      ) : <BookOpen size={20} />}
+                      ) : (
+                        <span className="text-2xl">{book.icon}</span>
+                      )}
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900">{book.title}</h4>
@@ -1258,6 +1260,26 @@ function HumanLibrarySection() {
 
         <div className="space-y-6">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-bold mb-4">Session Types</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { type: "In-person", icon: "🏛", desc: "Visit Nalian library. 30–45 min." },
+                { type: "Online", icon: "💻", desc: "Join via Zoom/Meet from anywhere." },
+                { type: "Field visit", icon: "🌿", desc: "For researchers & journalists." },
+                { type: "Group session", icon: "👥", desc: "For schools, NGOs, or teams." },
+              ].map((t) => (
+                <div key={t.type} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">{t.icon}</span>
+                    <span className="text-xs font-bold text-gray-900">{t.type}</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-tight">{t.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h3 className="text-lg font-bold mb-4">Upcoming Sessions</h3>
             <div className="space-y-4">
               {livingBookSessions.map((session, i) => (
@@ -1266,8 +1288,8 @@ function HumanLibrarySection() {
                     <span className="text-xs font-bold text-blue-600 uppercase">{session.type}</span>
                     <span className="text-xs text-gray-500">{session.date} · {session.time}</span>
                   </div>
-                  <h4 className="text-sm font-bold text-gray-900">{session.bookTitle}</h4>
-                  <p className="text-xs text-gray-500 mb-3">User: {session.userName}</p>
+                  <h4 className="text-sm font-bold text-gray-900">{session.bookTitle} — {session.userName}</h4>
+                  <p className="text-[11px] text-gray-600 font-medium mb-2">{session.location}</p>
                   <div className="flex gap-2">
                     {session.status === "pending" ? (
                       <button className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors">Approve</button>

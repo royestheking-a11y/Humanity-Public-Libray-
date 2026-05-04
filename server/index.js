@@ -159,14 +159,14 @@ createCRUD(LivingBookSession, "living-book-sessions");
 // --- Seeding Routes ---
 app.post("/api/seed/human-library", async (req, res) => {
   const livingBooksData = [
-    { title: "My home is underwater", narrator: "Fatema Khatun", category: "Climate migration · erosion", icon: "Waves", description: "A story of losing three homes to the rising tides of the Bay of Bengal." },
-    { title: "The sea used to give", narrator: "Abdul Jalil", category: "Fisher community · salinity", icon: "Fish", description: "How the changing salinity of our rivers turned a bountiful life into a struggle for survival." },
-    { title: "The night of the cyclone", narrator: "Marium Begum", category: "Disaster survivor · Dacope", icon: "Wind", description: "A harrowing account of surviving the strongest storm in a generation." },
-    { title: "A craft no one buys", narrator: "Shyamol Sutradhar", category: "Local artisan · heritage", icon: "Palette", description: "The fading art of traditional wood carving in the coastal villages." },
-    { title: "I was 13", narrator: "Tania Akter", category: "Early marriage · education", icon: "Heart", description: "A journey from being a child bride to an advocate for girls' education." },
-    { title: "Our ancestors' land", narrator: "Joyanto Munda", category: "Indigenous community", icon: "History", description: "Preserving the culture and land rights of the Munda people in the Sundarbans." },
-    { title: "Walking miles for water", narrator: "Sufia Bibi", category: "Water crisis · salinity", icon: "Droplets", description: "The daily struggle of coastal women to find a single pot of drinkable water." },
-    { title: "I stayed to help", narrator: "Rezaul Karim", category: "Social worker · resilience", icon: "Handshake", description: "Why I chose to stay in my vulnerable village to build a better future for the next generation." }
+    { title: "My home is underwater", narrator: "Climate migration · erosion", category: "Climate migration · erosion", icon: "🌊", description: "A story of losing three homes to the rising tides of the Bay of Bengal." },
+    { title: "The sea used to give", narrator: "Fisher community · salinity", category: "Fisher community · salinity", icon: "🐟", description: "How the changing salinity of our rivers turned a bountiful life into a struggle for survival." },
+    { title: "The night of the cyclone", narrator: "Disaster survivor · Dacope", category: "Disaster survivor · Dacope", icon: "🌀", description: "A harrowing account of surviving the strongest storm in a generation." },
+    { title: "A craft no one buys", narrator: "Local artisan · heritage", category: "Local artisan · heritage", icon: "🎨", description: "The fading art of traditional wood carving in the coastal villages." },
+    { title: "I was 13", narrator: "Early marriage · education", category: "Early marriage · education", icon: "💍", description: "A journey from being a child bride to an advocate for girls' education." },
+    { title: "Our ancestors' land", narrator: "Indigenous community", category: "Indigenous community", icon: "🏺", description: "Preserving the culture and land rights of the Munda people in the Sundarbans." },
+    { title: "Walking miles for water", narrator: "Water crisis · salinity", category: "Water crisis · salinity", icon: "💧", description: "The daily struggle of coastal women to find a single pot of drinkable water." },
+    { title: "I stayed to help", narrator: "Social worker · resilience", category: "Social worker · resilience", icon: "🤝", description: "Why I chose to stay in my vulnerable village to build a better future for the next generation." }
   ];
 
   try {
@@ -175,14 +175,26 @@ app.post("/api/seed/human-library", async (req, res) => {
     
     // Seed some initial sessions
     const sessionData = [
-      { bookTitle: "The night of the cyclone", userName: "Admin", userEmail: "admin@hpl.com", date: "12 JUL", time: "6:00 PM", location: "Online", type: "Online", status: "approved" },
-      { bookTitle: "My home is underwater", userName: "Admin", userEmail: "admin@hpl.com", date: "19 JUL", time: "10:00 AM", location: "Nalian Library, Dacope", type: "In-person", status: "approved" },
-      { bookTitle: "Researcher field visit", userName: "Admin", userEmail: "admin@hpl.com", date: "26 JUL", time: "Full day", location: "Nalian village", type: "Field visit", status: "approved" }
+      { bookTitle: "The night of the cyclone", userName: "Disaster survivor", userEmail: "hpl@humanity.org", date: "12 JUL", time: "6:00 PM · 45 min", location: "Hosted by Humanity Public Library", type: "Online", status: "approved" },
+      { bookTitle: "My home is underwater", userName: "Climate migrant", userEmail: "hpl@humanity.org", date: "19 JUL", time: "10:00 AM · 30 min", location: "Nalian Library, Dacope", type: "In-person", status: "approved" },
+      { bookTitle: "Researcher field visit", userName: "Coastal community", userEmail: "hpl@humanity.org", date: "26 JUL", time: "Full day", location: "Nalian village · Max 6 participants", type: "Field visit", status: "approved" }
     ];
     await LivingBookSession.deleteMany({});
     await LivingBookSession.insertMany(sessionData);
+    
+    // Also reset all books to available to fix the "1 borrowed" issue
+    await Book.updateMany({}, { available: true });
 
-    res.json({ message: "Human Library seeded successfully" });
+    res.json({ message: "Human Library seeded and books reset successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/fix-books", async (req, res) => {
+  try {
+    const result = await Book.updateMany({}, { available: true });
+    res.json({ message: `Successfully updated ${result.modifiedCount} books to available.` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
