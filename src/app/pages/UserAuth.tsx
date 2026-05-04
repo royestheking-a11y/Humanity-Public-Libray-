@@ -12,7 +12,7 @@ import type { AppUser } from "../context/AppContext";
 const AVATAR_COLORS = ["#2563EB", "#22C55E", "#60A5FA", "#6B7280", "#7C3AED", "#1D4ED8"];
 
 export default function UserAuth() {
-  const { users, addUser, setCurrentUser } = useApp();
+  const { users, addUser, setCurrentUser, login, register } = useApp();
   const { t, isBn, bnFont } = useLang();
   const F = isBn ? bnFont : "'Inter', sans-serif";
   const FH = isBn ? bnFont : "'Sora', sans-serif";
@@ -41,30 +41,35 @@ export default function UserAuth() {
   const handleLogin = async () => {
     if (!loginEmail || !loginPass) { setLoginError(t("auth.fillAllFields")); return; }
     setLoginLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    const user = users.find((u) => u.email.toLowerCase() === loginEmail.toLowerCase() && u.password === loginPass);
-    if (user) { setCurrentUser(user); navigate("/user/dashboard", { replace: true }); }
-    else { setLoginError(t("auth.invalidCredentials")); setLoginLoading(false); }
+    setLoginError("");
+    try {
+      await login({ email: loginEmail, password: loginPass });
+      navigate("/user/dashboard", { replace: true });
+    } catch (err: any) {
+      setLoginError(err.message || t("auth.invalidCredentials"));
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
   const handleRegister = async () => {
-    const { name, email, phone, password, confirm } = regForm;
+    const { name, email, phone, password, confirm, studentId } = regForm;
     if (!name || !email || !phone || !password || !confirm) { setRegError(t("auth.fillAllRequired")); return; }
     if (!/^01[3-9]\d{8}$/.test(phone)) { setRegError(t("auth.invalidPhone")); return; }
     if (password.length < 6) { setRegError(t("auth.shortPassword")); return; }
     if (password !== confirm) { setRegError(t("auth.passwordMismatch")); return; }
-    if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) { setRegError(t("auth.emailExists")); return; }
+    
     setRegLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    const newUser: AppUser = {
-      id: `u${Date.now()}`, name, email, phone,
-      studentId: regForm.studentId || undefined, password,
-      joinDate: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
-      totalBorrowed: 0,
-      avatarColor: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
-    };
-    addUser(newUser); setCurrentUser(newUser); setRegSuccess(true);
-    setTimeout(() => navigate("/user/dashboard", { replace: true }), 1200);
+    setRegError("");
+    try {
+      await register({ name, email, phone, password, studentId });
+      setRegSuccess(true);
+      setTimeout(() => navigate("/user/dashboard", { replace: true }), 1200);
+    } catch (err: any) {
+      setRegError(err.message || t("auth.emailExists"));
+    } finally {
+      setRegLoading(false);
+    }
   };
 
   const inputBase = {

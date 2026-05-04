@@ -15,8 +15,9 @@ const INFO_ITEMS = [
 ];
 
 export default function AdminLogin() {
-  const { isAdmin, setIsAdmin } = useApp();
+  const { login, isAdmin } = useApp();
   const navigate = useNavigate();
+  const [email, setEmail] = useState("admin@hpl.com");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
@@ -27,17 +28,18 @@ export default function AdminLogin() {
   }, [isAdmin, navigate]);
 
   const handleLogin = async () => {
-    if (!password.trim()) {
-      setError("Please enter your admin password.");
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password.");
       return;
     }
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-    if (password === "admin123") {
-      setIsAdmin(true);
+    setError("");
+    try {
+      await login({ email, password });
       navigate("/admin", { replace: true });
-    } else {
-      setError("Incorrect password. Demo hint: admin123");
+    } catch (err: any) {
+      setError(err.message || "Invalid admin credentials.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -160,6 +162,15 @@ export default function AdminLogin() {
               <p style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'Inter', sans-serif" }}>Secure admin portal</p>
             </div>
             <div className="space-y-4">
+              <div className="relative">
+                <Shield size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.25)" }} />
+                <input type="email" value={email}
+                  onChange={e => { setEmail(e.target.value); setError(""); }}
+                  onKeyDown={e => e.key === "Enter" && handleLogin()}
+                  placeholder="Admin email"
+                  className="w-full pl-11 pr-4 py-4 rounded-xl outline-none text-white"
+                  style={{ background: "rgba(37,99,235,0.08)", border: "1.5px solid rgba(37,99,235,0.2)", fontFamily: "'Inter', sans-serif" }} />
+              </div>
               <div className="relative">
                 <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "rgba(255,255,255,0.25)" }} />
                 <input type={showPass ? "text" : "password"} value={password}

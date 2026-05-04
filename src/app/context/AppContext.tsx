@@ -284,6 +284,7 @@ interface AppContextType {
   currentUser: AppUser | null; 
   setCurrentUser: (u: AppUser | null) => void;
   login: (credentials: any) => Promise<void>;
+  register: (userData: any) => Promise<void>;
   logout: () => void;
 
   // ── Methods ──
@@ -431,7 +432,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (credentials: any) => {
-    const user = await api.login(credentials);
+    const { user, token } = await api.login(credentials);
+    if (token) localStorage.setItem("hpl_token", token);
+    setCurrentUser(user);
+    setIsAdmin(user.role === "admin");
+  };
+
+  const register = async (userData: any) => {
+    const { user, token } = await api.register(userData);
+    if (token) localStorage.setItem("hpl_token", token);
     setCurrentUser(user);
     setIsAdmin(user.role === "admin");
   };
@@ -440,6 +449,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentUser(null);
     setIsAdmin(false);
     localStorage.removeItem("hpl_currentUser");
+    localStorage.removeItem("hpl_token");
     localStorage.removeItem("isAdmin");
   };
 
@@ -484,7 +494,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       userStreak, userPoints, addPoints, addDonation, isAdmin, setIsAdmin,
       isLoading,
       books, setBooks, users, setUsers, blogPosts, setBlogPosts, events, setEvents, livingBooks, setLivingBooks, carouselSlides, setCarouselSlides, bookRequests, setBookRequests, payments, setPayments, donationTiers, setDonationTiers, volunteerRoles, setVolunteerRoles, leaderboard, setLeaderboard, badges, setBadges, stats, setStats,
-      currentUser, setCurrentUser, login, logout,
+      currentUser, setCurrentUser, login, register, logout,
       addBookRequest, updateBookRequest, addPayment, updatePayment, addUser, updateUser
     }}>
       {children}

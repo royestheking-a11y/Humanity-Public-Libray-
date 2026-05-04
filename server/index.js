@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
@@ -114,16 +116,75 @@ createCRUD(DonationTier, "donation-tiers");
 createCRUD(Leaderboard, "leaderboard");
 createCRUD(VolunteerApplication, "volunteer-applications");
 
-// Specific Auth Routes (Simple version for migration)
+// --- Auth Routes ---
+
+// Registration
+app.post("/api/auth/register", async (req, res) => {
+  const { name, email, password, phone, studentId } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ error: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ 
+      name, 
+      email, 
+      password: hashedPassword, 
+      phone, 
+      studentId,
+      role: email.includes("admin") ? "admin" : "member" 
+    });
+    
+    await user.save();
+    
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    res.status(201).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Login
 app.post("/api/auth/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (user && user.password === password) { // In production use bcrypt
-      res.json(user);
-    } else {
-      res.status(401).json({ error: "Invalid credentials" });
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    // Fallback for plain text password (if seeded)
+    if (!isMatch && password === user.password) {
+      // Auto-migrate to hashed password
+      user.password = await bcrypt.hash(password, 10);
+      await user.save();
+    } else if (!isMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
     }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    res.json({ user, token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin Login Specific (optional convenience)
+app.post("/api/auth/admin/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email, role: "admin" });
+    if (!user) return res.status(401).json({ error: "Admin not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch && password === user.password) {
+      user.password = await bcrypt.hash(password, 10);
+      await user.save();
+    } else if (!isMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    res.json({ user, token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
 import Book from "./models/Book.js";
 import User from "./models/User.js";
 import { Event, BlogPost, Testimonial } from "./models/Content.js";
@@ -40,7 +41,7 @@ const EVENTS = [
 
 const USERS = [
   { name: "Rashida Khanam", email: "rashida@example.com", phone: "01712345678", password: "pass123", studentId: "STU001", joinDate: "Mar 10, 2026", totalBorrowed: 4, avatarColor: "#2563EB", role: "user" },
-  { name: "Admin User", email: "admin@hpl.com", phone: "01700000000", password: "admin123", role: "admin", joinDate: "Jan 01, 2026" },
+  { name: "Admin User", email: "admin@hpl.com", phone: "01700000000", password: "hpl202525", role: "admin", joinDate: "Jan 01, 2026" },
 ];
 
 const CAROUSEL_SLIDES = [
@@ -86,14 +87,18 @@ const seed = async () => {
     console.log("Events seeded");
 
     await User.deleteMany({});
-    await User.insertMany(USERS);
-    console.log("Users seeded");
+    // Hash passwords before seeding
+    const hashedUsers = await Promise.all(USERS.map(async (u) => {
+      const hashedPassword = await bcrypt.hash(u.password, 10);
+      return { ...u, password: hashedPassword };
+    }));
+    await User.insertMany(hashedUsers);
+    console.log("Users seeded with hashed passwords");
 
     await CarouselSlide.deleteMany({});
     await CarouselSlide.insertMany(CAROUSEL_SLIDES);
     console.log("Carousel slides seeded");
 
-    // Seed others with empty or basic data as needed
     await Stat.deleteMany({});
     await Stat.create({
       totalBooks: 52840,
